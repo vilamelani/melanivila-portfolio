@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 """
-Servidor estático de desarrollo con soporte de HTTP Range.
+Static dev server with HTTP Range support.
 
-Hace falta porque `python -m http.server` NO implementa byte ranges: sin eso
-el navegador marca los <video> como no-buscables (`seekable.end === 0`) y cada
-asignación de `currentTime` se ignora en silencio — el scroll-scrubbing queda
-congelado en el primer fotograma. Cualquier hosting estático real (Netlify,
-Vercel, GitHub Pages, nginx) ya soporta rangos; esto sólo empareja el entorno
-local con producción.
+`python -m http.server` does not implement byte ranges. Without them the
+browser marks <video> elements as non-seekable (`seekable.end === 0`) and every
+`currentTime` assignment is silently ignored, so the scroll-scrubbed videos
+stay on the first frame. Real static hosts (Vercel, Netlify, GitHub Pages,
+nginx) already support ranges; this only makes local match production.
 
-Uso:  python serve.py [puerto]     (por defecto 5173)
+Usage:  python scripts/serve.py [port]     (default 5173)
 """
 
 import os
@@ -18,7 +17,7 @@ import sys
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 5173
-ROOT = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CHUNK = 64 * 1024
 
 
@@ -48,7 +47,7 @@ class RangeHandler(SimpleHTTPRequestHandler):
         size = os.path.getsize(path)
         first, last = m.group(1), m.group(2)
 
-        if first == "":                       # sufijo: bytes=-N (últimos N)
+        if first == "":                       # suffix range: bytes=-N (last N bytes)
             if last == "":
                 return super().do_GET()
             start = max(0, size - int(last))
@@ -83,7 +82,7 @@ class RangeHandler(SimpleHTTPRequestHandler):
                 try:
                     self.wfile.write(data)
                 except (BrokenPipeError, ConnectionResetError):
-                    return        # el navegador abortó el seek: normal
+                    return        # the browser aborted the seek: expected
                 remaining -= len(data)
 
     def log_message(self, fmt, *args):
@@ -95,7 +94,7 @@ if __name__ == "__main__":
     os.chdir(ROOT)
     srv = ThreadingHTTPServer(("127.0.0.1", PORT), RangeHandler)
     srv.daemon_threads = True
-    print("Sirviendo %s en http://localhost:%d  (Range: on)" % (ROOT, PORT))
+    print("Serving %s at http://localhost:%d  (Range: on)" % (ROOT, PORT))
     try:
         srv.serve_forever()
     except KeyboardInterrupt:

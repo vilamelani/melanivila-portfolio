@@ -1,7 +1,4 @@
-# fuentes y herramientas — no van al sitio publicado
-raw/
-Media/
-serve.py
-.claude/
-BUILD-PLAN.md
-PROMPTS-VIDEO.md
+# sources and tooling, not part of the published site
+scripts/
+package.json
+README.md

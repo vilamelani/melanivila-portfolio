@@ -290,7 +290,7 @@ html.loaded .preloader { pointer-events: none; }
   filter: brightness(.62) contrast(1.08) saturate(.9);
 }
 /* Per-scene grade. The films arrive already dark (measured mean luma:
-   creator 29, builder 35, lead 57 of 255), so each gets the correction it
+   hero 29, pillars 35, contact 57 of 255), so each gets the correction it
    actually needs instead of one blanket knock-down. */
 .media video.hero__video    { filter: brightness(1.02) contrast(1.05) saturate(.95); }
 .media video.pillars__video { filter: brightness(1.10) contrast(1.05) saturate(.95); }
