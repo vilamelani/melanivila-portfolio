@@ -1,0 +1,18 @@
+# Vercel
+.vercel
+
+# Environment and secrets
+.env
+.env.*
+
+# Source media, not served by the site
+raw/
+Media/
+
+# Tooling and OS/editor files
+.claude/
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+node_modules/
