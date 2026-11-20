@@ -151,8 +151,6 @@
 
     $$('a, button').forEach(function (el) {
       el.addEventListener('pointerenter', function () {
-        /* work rows get the following preview panel instead of a label —
-           showing both crowds the same few hundred pixels */
         grow(44, '');
         gsap.to(cur, { backgroundColor: 'rgba(108,75,245,.85)', duration: .3 });
       });
@@ -530,45 +528,7 @@
   }
 
   /* ============================================================
-     13. WORK — spotlight + cursor-following preview
-     ============================================================ */
-  function initWork() {
-    if (!hasGSAP || REDUCED) return;
-    if (!$('.work__index')) return;      /* section can be commented out */
-
-    gsap.from('.row', {
-      y: 40, opacity: 0, duration: 1, ease: 'expo.out', stagger: .08,
-      clearProps: 'opacity,transform',          /* let CSS own the spotlight hover */
-      scrollTrigger: { trigger: '.work__index', start: 'top 80%' }
-    });
-
-    var index = $('#workIndex');
-    var prev = $('#workPreview');
-    var num = $('.work__preview-num');
-    if (!index || !prev || !window.matchMedia('(pointer: fine)').matches) return;
-
-    var xTo = gsap.quickTo(prev, 'x', { duration: .45, ease: 'power3' });
-    var yTo = gsap.quickTo(prev, 'y', { duration: .45, ease: 'power3' });
-
-    index.addEventListener('pointermove', function (e) {
-      var r = index.getBoundingClientRect();
-      xTo(e.clientX - r.left - prev.offsetWidth / 2);
-      yTo(e.clientY - r.top - prev.offsetHeight / 2);
-    });
-
-    $$('.row', index).forEach(function (row) {
-      row.addEventListener('pointerenter', function () {
-        num.textContent = row.dataset.preview.padStart(2, '0');
-        gsap.to(prev, { opacity: 1, scale: 1, duration: .45, ease: 'expo.out' });
-      });
-    });
-    index.addEventListener('pointerleave', function () {
-      gsap.to(prev, { opacity: 0, scale: .9, duration: .35, ease: 'power3.out' });
-    });
-  }
-
-  /* ============================================================
-     14. CTA — scrub + copy to clipboard
+     13. CTA — scrub + copy to clipboard
      ============================================================ */
   function initCopyEmail() {
     var btn = $('#copyEmail');
@@ -686,7 +646,6 @@
       initMission();
       initPillars();
       initStory();
-      initWork();
       initCTA();          /* created after the pin, in document order */
       initCursor();
       initProgressRail();
